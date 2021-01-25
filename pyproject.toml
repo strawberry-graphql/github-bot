@@ -6,7 +6,7 @@ authors = ["Patrick Arminio <patrick.arminio@gmail.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.8"
 strawberry-graphql = "^0.44.12"
 uvicorn = "^0.13.3"
 starlette = "^0.14.1"
