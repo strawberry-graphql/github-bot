@@ -7,5 +7,6 @@ file checks (and more) on
 ## How to run
 
 ```shell
-make run
+poetry install
+poetry run task server
 ```

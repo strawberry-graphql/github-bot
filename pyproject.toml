@@ -16,6 +16,7 @@ httpx = "^0.16.1"
 flake8 = "^3.8.4"
 black = {version = "^20.8b1", allow-prereleases = true}
 isort = "^5.7.0"
+taskipy = "^1.6.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -28,3 +29,6 @@ ensure_newline_before_comments = true
 force_grid_wrap = 0
 line_length = 88
 multi_line_output = 3
+
+[tool.taskipy.tasks]
+server = "GITHUB_TOKEN=demo poetry run python main.py --reload"
