@@ -1,3 +1,9 @@
+OK_TO_PREVIEW = """\
+Hi 👋 You can find a preview of the docs here:
+
+{links}
+"""
+
 MISSING_RELEASE_FILE = """\
 Hi, thanks for contributing to Strawberry 🍓!
 

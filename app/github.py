@@ -5,14 +5,14 @@ import httpx
 from .config import GITHUB_TOKEN
 from .release import ReleaseInfo
 
-SIGNATURE = "<!-- action-check: release-file -->"
+SIGNATURE_TEMPLATE = "<!-- action-check: {slug} -->"
 API_BASE = "https://api.github.com"
 
 
-def is_release_check_comment(comment: dict) -> bool:
+def has_signature(comment: dict, slug: str) -> bool:
     return (
         comment["user"]["login"] in ["github-actions[bot]", "botberry"]
-        and SIGNATURE in comment["body"]
+        and SIGNATURE_TEMPLATE.format(slug) in comment["body"]
     )
 
 
@@ -44,11 +44,11 @@ def get_labels(pr_number) -> typing.List[dict]:
     return response.json()
 
 
-def add_or_edit_comment(pr_number: int, comment: str):
+def add_or_edit_comment(pr_number: int, comment: str, slug: str):
     current_comments = get_comments(pr_number)
 
     previous_comment = next(
-        (comment for comment in current_comments if is_release_check_comment(comment)),
+        (comment for comment in current_comments if has_signature(comment, slug)),
         None,
     )
 
@@ -58,7 +58,7 @@ def add_or_edit_comment(pr_number: int, comment: str):
     response = method(
         url,
         headers={"Authorization": f"token {GITHUB_TOKEN}"},
-        json={"body": comment + SIGNATURE},
+        json={"body": comment + SIGNATURE_TEMPLATE.format(slug)},
     )
 
     response.raise_for_status()
