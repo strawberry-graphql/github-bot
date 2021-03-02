@@ -12,7 +12,7 @@ API_BASE = "https://api.github.com"
 def has_signature(comment: dict, slug: str) -> bool:
     return (
         comment["user"]["login"] in ["github-actions[bot]", "botberry"]
-        and SIGNATURE_TEMPLATE.format(slug) in comment["body"]
+        and SIGNATURE_TEMPLATE.format(slug=slug) in comment["body"]
     )
 
 
@@ -58,7 +58,7 @@ def add_or_edit_comment(pr_number: int, comment: str, slug: str):
     response = method(
         url,
         headers={"Authorization": f"token {GITHUB_TOKEN}"},
-        json={"body": comment + SIGNATURE_TEMPLATE.format(slug)},
+        json={"body": comment + SIGNATURE_TEMPLATE.format(slug=slug)},
     )
 
     response.raise_for_status()
