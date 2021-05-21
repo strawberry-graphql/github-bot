@@ -44,7 +44,7 @@ def get_labels(pr_number) -> typing.List[dict]:
     return response.json()
 
 
-def add_or_edit_comment(pr_number: int, comment: str, slug: str):
+def add_or_edit_comment(pr_number: int, comment_template: str, slug: str):
     current_comments = get_comments(pr_number)
 
     previous_comment = next(
@@ -58,7 +58,7 @@ def add_or_edit_comment(pr_number: int, comment: str, slug: str):
     response = method(
         url,
         headers={"Authorization": f"token {GITHUB_TOKEN}"},
-        json={"body": comment + SIGNATURE_TEMPLATE.format(slug=slug)},
+        json={"body": comment_template + SIGNATURE_TEMPLATE.format(slug=slug)},
     )
 
     response.raise_for_status()
