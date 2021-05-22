@@ -9,7 +9,22 @@ SIGNATURE_TEMPLATE = "<!-- action-check: {slug} -->"
 API_BASE = "https://api.github.com"
 
 
-def has_signature(comment: dict, slug: str) -> bool:
+class GithubUser(typing.TypedDict):
+    login: str
+
+
+class GithubComment(typing.TypedDict):
+    url: str
+    body: str
+    user: GithubUser
+
+
+class GithubLabel(typing.TypedDict):
+    name: str
+    url: str
+
+
+def has_signature(comment: GithubComment, slug: str) -> bool:
     return (
         comment["user"]["login"] in ["github-actions[bot]", "botberry"]
         and SIGNATURE_TEMPLATE.format(slug=slug) in comment["body"]
@@ -28,7 +43,7 @@ def get_labels_link(pr_number: int) -> str:
     return API_BASE + url
 
 
-def get_comments(pr_number: int) -> typing.List[dict]:
+def get_comments(pr_number: int) -> typing.List[GithubComment]:
     comments_link = get_comments_link(pr_number)
 
     response = httpx.get(comments_link)
@@ -36,7 +51,7 @@ def get_comments(pr_number: int) -> typing.List[dict]:
     return response.json()
 
 
-def get_labels(pr_number) -> typing.List[dict]:
+def get_labels(pr_number) -> typing.List[GithubLabel]:
     labels_link = get_labels_link(pr_number)
 
     response = httpx.get(labels_link)
@@ -44,7 +59,7 @@ def get_labels(pr_number) -> typing.List[dict]:
     return response.json()
 
 
-def add_or_edit_comment(pr_number: int, comment: str, slug: str):
+def add_or_edit_comment(pr_number: int, comment_template: str, slug: str):
     current_comments = get_comments(pr_number)
 
     previous_comment = next(
@@ -58,7 +73,7 @@ def add_or_edit_comment(pr_number: int, comment: str, slug: str):
     response = method(
         url,
         headers={"Authorization": f"token {GITHUB_TOKEN}"},
-        json={"body": comment + SIGNATURE_TEMPLATE.format(slug=slug)},
+        json={"body": comment_template + SIGNATURE_TEMPLATE.format(slug=slug)},
     )
 
     response.raise_for_status()
@@ -78,10 +93,9 @@ def update_labels(pr_number: int, release_info: typing.Optional[ReleaseInfo]):
         labels_to_add.add(new_release_label)
 
     labels_url = get_labels_link(pr_number)
-    current_labels = get_labels(pr_number)
 
     current_labels_url_by_name = {
-        label["name"]: label["url"] for label in current_labels
+        label["name"]: label["url"] for label in get_labels(pr_number)
     }
 
     current_labels = set(current_labels_url_by_name.keys())

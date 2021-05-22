@@ -21,7 +21,7 @@ Release type: patch
 Description of the changes, ideally with some examples, if adding a new feature.
 ```
 
-Release type can be one of patch, minor or major. We use [semver](https://semver.org/),\
+Release type can be one of patch, minor or major. We use [semver](https://semver.org/), \
 so make sure to pick the appropriate type. If in doubt feel free to ask :)
 """
 
