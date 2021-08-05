@@ -75,7 +75,7 @@ class Mutation:
         if input.release_info:
             comment = comment.format(changelog_preview=input.release_info.changelog)
 
-        if input.image_url:
+        if input.release_card_url:
             comment += f"\nHere's the preview release card for twitter: ![]({input.release_card_url})"
 
         add_or_edit_comment(input.pr_number, comment, slug="release-file")
