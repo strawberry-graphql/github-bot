@@ -1,8 +1,8 @@
 import uvicorn
 from starlette.applications import Starlette
-from strawberry.asgi import GraphQL
 
 from app.schema import schema
+from app.views import GraphQL
 
 app = Starlette(debug=False)
 app.add_route("/graphql", GraphQL(schema))
