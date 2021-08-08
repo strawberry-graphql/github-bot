@@ -83,7 +83,7 @@ class Mutation:
             )
 
         if input.tweet:
-            comment += f"\nHere's the tweet text: \n```{input.tweet}```"
+            comment += f"\n\nHere's the tweet text: \n```\n{input.tweet}\n```"
 
         add_or_edit_comment(input.pr_number, comment, slug="release-file")
         update_labels(input.pr_number, input.release_info)
