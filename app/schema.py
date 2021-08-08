@@ -33,6 +33,7 @@ class AddReleaseFileCommentInput:
     status: ReleaseFileStatus
     release_info: Optional[ReleaseInfo] = None
     release_card_url: Optional[str] = None
+    tweet: Optional[str] = None
 
 
 @strawberry.input
@@ -80,6 +81,9 @@ class Mutation:
                 "\n---\nHere's the preview release card for "
                 f"twitter:\n\n![]({input.release_card_url})"
             )
+
+        if input.tweet:
+            comment += f"\nHere's the tweet text: \n```{input.tweet}```"
 
         add_or_edit_comment(input.pr_number, comment, slug="release-file")
         update_labels(input.pr_number, input.release_info)
