@@ -79,11 +79,11 @@ class Mutation:
         if input.release_card_url:
             comment += (
                 "\n---\nHere's the preview release card for "
-                f"twitter:\n\n![]({input.release_card_url})"
+                f"twitter:\n\n![]({input.release_card_url})\n"
             )
 
         if input.tweet:
-            comment += f"\n\nHere's the tweet text: \n```\n{input.tweet}\n```"
+            comment += f"\n\nHere's the tweet text: \n```\n{input.tweet}\n```\n"
 
         add_or_edit_comment(input.pr_number, comment, slug="release-file")
         update_labels(input.pr_number, input.release_info)
