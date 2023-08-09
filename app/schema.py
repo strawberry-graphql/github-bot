@@ -34,12 +34,14 @@ class AddReleaseFileCommentInput:
     release_info: Optional[ReleaseInfo] = None
     release_card_url: Optional[str] = None
     tweet: Optional[str] = None
+    repo: Optional[str] = None
 
 
 @strawberry.input
 class AddOkToPreviewCommentInput:
     pr_number: int
     paths: List[str]
+    repo: Optional[str] = None
 
 
 @strawberry.type
@@ -57,7 +59,7 @@ class Mutation:
 
         comment = OK_TO_PREVIEW.format(links=links)
 
-        add_or_edit_comment(input.pr_number, comment, slug="ok-to-preview")
+        add_or_edit_comment(input.pr_number, comment, slug="ok-to-preview", repo=input.repo)
 
         return "ok"
 
@@ -85,8 +87,8 @@ class Mutation:
         if input.tweet:
             comment += f"\n\nHere's the tweet text: \n```\n{input.tweet}\n```\n"
 
-        add_or_edit_comment(input.pr_number, comment, slug="release-file")
-        update_labels(input.pr_number, input.release_info)
+        add_or_edit_comment(input.pr_number, comment, slug="release-file", repo=input.repo)
+        update_labels(input.pr_number, input.release_info, repo=input.repo)
 
         return "ok"
 
