@@ -59,7 +59,9 @@ class Mutation:
 
         comment = OK_TO_PREVIEW.format(links=links)
 
-        add_or_edit_comment(input.pr_number, comment, slug="ok-to-preview", repo=input.repo)
+        add_or_edit_comment(
+            input.pr_number, comment, slug="ok-to-preview", repo=input.repo
+        )
 
         return "ok"
 
@@ -87,7 +89,9 @@ class Mutation:
         if input.tweet:
             comment += f"\n\nHere's the tweet text: \n```\n{input.tweet}\n```\n"
 
-        add_or_edit_comment(input.pr_number, comment, slug="release-file", repo=input.repo)
+        add_or_edit_comment(
+            input.pr_number, comment, slug="release-file", repo=input.repo
+        )
         update_labels(input.pr_number, input.release_info, repo=input.repo)
 
         return "ok"

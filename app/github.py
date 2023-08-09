@@ -32,7 +32,9 @@ def has_signature(comment: GithubComment, slug: str) -> bool:
 
 
 def get_comments_link(pr_number: int, repo: typing.Optional[str] = None) -> str:
-    url = f"/repos/strawberry-graphql/{repo or 'strawberry'}/issues/{pr_number}/comments"
+    url = (
+        f"/repos/strawberry-graphql/{repo or 'strawberry'}/issues/{pr_number}/comments"
+    )
 
     return API_BASE + url
 
@@ -43,7 +45,9 @@ def get_labels_link(pr_number: int, repo: typing.Optional[str] = None) -> str:
     return API_BASE + url
 
 
-def get_comments(pr_number: int, repo: typing.Optional[str] = None) -> typing.List[GithubComment]:
+def get_comments(
+    pr_number: int, repo: typing.Optional[str] = None
+) -> typing.List[GithubComment]:
     comments_link = get_comments_link(pr_number, repo=repo)
 
     response = httpx.get(comments_link)
@@ -51,7 +55,9 @@ def get_comments(pr_number: int, repo: typing.Optional[str] = None) -> typing.Li
     return response.json()
 
 
-def get_labels(pr_number:int, repo: typing.Optional[str] = None) -> typing.List[GithubLabel]:
+def get_labels(
+    pr_number: int, repo: typing.Optional[str] = None
+) -> typing.List[GithubLabel]:
     labels_link = get_labels_link(pr_number, repo=repo)
 
     response = httpx.get(labels_link)
@@ -60,10 +66,7 @@ def get_labels(pr_number:int, repo: typing.Optional[str] = None) -> typing.List[
 
 
 def add_or_edit_comment(
-    pr_number: int,
-    comment_template: str,
-    slug: str,
-    repo: typing.Optional[str] = None
+    pr_number: int, comment_template: str, slug: str, repo: typing.Optional[str] = None
 ):
     current_comments = get_comments(pr_number, repo=repo)
 
@@ -73,7 +76,11 @@ def add_or_edit_comment(
     )
 
     method = httpx.patch if previous_comment else httpx.post
-    url = previous_comment["url"] if previous_comment else get_comments_link(pr_number, repo=repo)
+    url = (
+        previous_comment["url"]
+        if previous_comment
+        else get_comments_link(pr_number, repo=repo)
+    )
 
     response = method(
         url,
@@ -85,9 +92,7 @@ def add_or_edit_comment(
 
 
 def update_labels(
-    pr_number: int,
-    release_info: typing.Optional[ReleaseInfo],
-    repo: str | None = None
+    pr_number: int, release_info: typing.Optional[ReleaseInfo], repo: str | None = None
 ):
     labels_to_add = {"bot:has-release-file"}
     labels_to_remove: typing.Set[str] = set()
