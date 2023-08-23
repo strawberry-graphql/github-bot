@@ -36,6 +36,7 @@ dev = [
 [tool.pdm.scripts]
 dev.env = { "GITHUB_TOKEN" = "demo", "SKIP_TOKEN_CHECK" = "true" }
 dev.cmd = "python main.py --reload"
+server = "uvicorn main:app --reload --port 8080 --host 0.0.0.0"
 
 [tool.pdm.build]
 includes = []
