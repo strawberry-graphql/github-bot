@@ -15,8 +15,6 @@ WORKDIR /project
 
 RUN pdm install --prod --no-lock --no-editable -v
 
-RUN SECRET_KEY=secret pdm run python manage.py collectstatic --noinput
-
 EXPOSE 8080
 
 CMD ["pdm", "server"]
