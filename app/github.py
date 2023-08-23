@@ -31,7 +31,7 @@ def has_signature(comment: GithubComment, slug: str) -> bool:
     )
 
 
-def get_comments_link(pr_number: int, repo: typing.Optional[str] = None) -> str:
+def get_comments_link(pr_number: int, repo: str | None = None) -> str:
     url = (
         f"/repos/strawberry-graphql/{repo or 'strawberry'}/issues/{pr_number}/comments"
     )
@@ -39,15 +39,16 @@ def get_comments_link(pr_number: int, repo: typing.Optional[str] = None) -> str:
     return API_BASE + url
 
 
-def get_labels_link(pr_number: int, repo: typing.Optional[str] = None) -> str:
+def get_labels_link(pr_number: int, repo: str | None = None) -> str:
     url = f"/repos/strawberry-graphql/{repo or 'strawberry'}/issues/{pr_number}/labels"
 
     return API_BASE + url
 
 
 def get_comments(
-    pr_number: int, repo: typing.Optional[str] = None
-) -> typing.List[GithubComment]:
+    pr_number: int,
+    repo: str | None = None,
+) -> list[GithubComment]:
     comments_link = get_comments_link(pr_number, repo=repo)
 
     response = httpx.get(comments_link)
@@ -56,8 +57,9 @@ def get_comments(
 
 
 def get_labels(
-    pr_number: int, repo: typing.Optional[str] = None
-) -> typing.List[GithubLabel]:
+    pr_number: int,
+    repo: str | None = None,
+) -> list[GithubLabel]:
     labels_link = get_labels_link(pr_number, repo=repo)
 
     response = httpx.get(labels_link)
@@ -66,8 +68,11 @@ def get_labels(
 
 
 def add_or_edit_comment(
-    pr_number: int, comment_template: str, slug: str, repo: typing.Optional[str] = None
-):
+    pr_number: int,
+    comment_template: str,
+    slug: str,
+    repo: str | None = None,
+) -> None:
     current_comments = get_comments(pr_number, repo=repo)
 
     previous_comment = next(
@@ -92,10 +97,12 @@ def add_or_edit_comment(
 
 
 def update_labels(
-    pr_number: int, release_info: typing.Optional[ReleaseInfo], repo: str | None = None
-):
+    pr_number: int,
+    release_info: ReleaseInfo | None,
+    repo: str | None = None,
+) -> None:
     labels_to_add = {"bot:has-release-file"}
-    labels_to_remove: typing.Set[str] = set()
+    labels_to_remove: set[str] = set()
 
     new_release_label = None
 

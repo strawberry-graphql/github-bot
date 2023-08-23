@@ -7,6 +7,6 @@ file checks (and more) on
 ## How to run
 
 ```shell
-poetry install
-poetry run task server
+pdm install
+pdm dev
 ```

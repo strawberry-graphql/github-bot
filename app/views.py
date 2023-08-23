@@ -1,5 +1,4 @@
 import os
-from typing import Optional
 
 from starlette.datastructures import Headers
 from starlette.requests import Request
@@ -8,17 +7,25 @@ from starlette.types import Receive, Scope, Send
 from strawberry.asgi import GraphQL as BaseGraphQL
 
 
-def is_token_valid(token: str) -> bool:
+def is_token_valid(token: str | None) -> bool:
+    if os.environ.get("SKIP_TOKEN_CHECK", "false").lower() == "true":
+        return True
+
+    if "ALLOWED_TOKEN" not in os.environ:
+        message = "ALLOWED_TOKEN env variable not set."
+
+        raise ValueError(message)
+
     return token == os.environ["ALLOWED_TOKEN"]
 
 
-def get_token_from_authorization_header(value: Optional[str]) -> Optional[str]:
+def get_token_from_authorization_header(value: str | None) -> str | None:
     if not value:
         return None
 
     prefix, token = value.split(" ")
 
-    assert prefix == "Bearer"
+    assert prefix == "Bearer"  # noqa: S101
 
     return token
 
@@ -30,20 +37,15 @@ class GraphQL(BaseGraphQL):
         token = self._get_token(scope)
 
         # Allow GraphiQL
-        if request.method != "GET":
-            if token is None:
-                response = Response(status_code=401)
+        if request.method != "GET" and not is_token_valid(token):
+            response = Response(status_code=403)
 
-                return await response(scope, receive, send)
-
-            if not is_token_valid(token):
-                response = Response(status_code=403)
-
-                return await response(scope, receive, send)
+            return await response(scope, receive, send)
 
         await super().__call__(scope=scope, receive=receive, send=send)
+        return None
 
-    def _get_token(self, scope: Scope) -> Optional[str]:
+    def _get_token(self, scope: Scope) -> str | None:
         headers = Headers(scope=scope)
         authorization_header = headers.get("Authorization")
 

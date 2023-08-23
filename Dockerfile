@@ -1,14 +1,22 @@
-FROM tiangolo/uvicorn-gunicorn:python3.8
+FROM python:3.11-slim
 
-# Install Poetry
-RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | POETRY_HOME=/opt/poetry python && \
-    cd /usr/local/bin && \
-    ln -s /opt/poetry/bin/poetry && \
-    poetry config virtualenvs.create false
+RUN apt-get update && apt-get install postgresql-client cmake -y
 
-# Copy using poetry.lock* in case it doesn't exist yet
-COPY ./pyproject.toml ./poetry.lock* /app/
+# install PDM
+RUN pip install -U pip setuptools wheel
+RUN pip install pdm
 
-RUN poetry install --no-root --no-dev
+# copy files
+COPY pyproject.toml pdm.lock /project/
+COPY . /project
 
-COPY . /app
+WORKDIR /project
+# TODO: improve caching
+
+RUN pdm install --prod --no-lock --no-editable -v
+
+RUN SECRET_KEY=secret pdm run python manage.py collectstatic --noinput
+
+EXPOSE 8080
+
+CMD ["pdm", "server"]

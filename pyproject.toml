@@ -1,28 +1,18 @@
-[tool.poetry]
+
+[project]
 name = "strawberry-github-bot"
 version = "0.1.0"
 description = ""
-authors = ["Patrick Arminio <patrick.arminio@gmail.com>"]
-license = "MIT"
+authors = [{ name = "Patrick Arminio", email = "patrick.arminio@gmail.com" }]
+dependencies = ["strawberry-graphql", "uvicorn", "starlette", "httpx", "mypy"]
+requires-python = ">=3.8,<4.0"
+readme = "README.md"
+license = { text = "MIT" }
 
-[tool.poetry.dependencies]
-python = "^3.8"
-strawberry-graphql = "^0.44.12"
-uvicorn = "^0.13.3"
-starlette = "^0.14.1"
-httpx = "^0.16.1"
-mypy = "^0.812"
-
-[tool.poetry.dev-dependencies]
-flake8 = "^3.8.4"
-black = {version = "^20.8b1", allow-prereleases = true}
-isort = "^5.7.0"
-taskipy = "^1.6.0"
-pdbpp = "^0.10.2"
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
 
 [tool.isort]
 include_trailing_comma = true
@@ -32,5 +22,26 @@ force_grid_wrap = 0
 line_length = 88
 multi_line_output = 3
 
-[tool.taskipy.tasks]
-server = "GITHUB_TOKEN=demo poetry run python main.py --reload"
+
+[tool.pdm]
+[tool.pdm.dev-dependencies]
+dev = [
+    "flake8<4.0.0,>=3.8.4",
+    "black<21.0,>=20.8b1",
+    "isort<6.0.0,>=5.7.0",
+    "taskipy<2.0.0,>=1.6.0",
+    "pdbpp>=0.10.3",
+]
+
+[tool.pdm.scripts]
+dev.env = { "GITHUB_TOKEN" = "demo", "SKIP_TOKEN_CHECK" = "true" }
+dev.cmd = "python main.py --reload"
+
+[tool.pdm.build]
+includes = []
+
+[tool.ruff]
+line-length = 88
+select = ["ALL"]
+ignore = ["D", "ANN101"]
+target-version = "py311"
