@@ -44,5 +44,5 @@ includes = []
 [tool.ruff]
 line-length = 88
 select = ["ALL"]
-ignore = ["D", "ANN101"]
+ignore = ["D", "ANN101", "CPY001"]
 target-version = "py311"
